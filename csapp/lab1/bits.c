@@ -143,7 +143,7 @@ NOTES:
  *   Rating: 1
  */
 int bitXor(int x, int y) {
-  return 2;
+  return ~(~(~x&y)&~(x&~y));
 }
 /* 
  * tmin - return minimum two's complement integer 
@@ -152,8 +152,7 @@ int bitXor(int x, int y) {
  *   Rating: 1
  */
 int tmin(void) {
-
-  return 2;
+  return 0x80 << 24;
 
 }
 //2
@@ -165,7 +164,7 @@ int tmin(void) {
  *   Rating: 1
  */
 int isTmax(int x) {
-  return 2;
+  return !(~(x+x+1+!(x+1)));
 }
 /* 
  * allOddBits - return 1 if all odd-numbered bits in word set to 1
@@ -176,7 +175,9 @@ int isTmax(int x) {
  *   Rating: 2
  */
 int allOddBits(int x) {
-  return 2;
+  // printf("[%x]\n", 0xaa<<8|0xaa<<8|0xaa<<8|0xaa);
+  // printf("%d\n", x);
+  return !((~(0xaa<<24|0xaa<<16|0xaa<<8|0xaa)|x)^~0);
 }
 /* 
  * negate - return -x 
@@ -186,7 +187,7 @@ int allOddBits(int x) {
  *   Rating: 2
  */
 int negate(int x) {
-  return 2;
+  return ~x+1;
 }
 //3
 /* 
@@ -199,7 +200,13 @@ int negate(int x) {
  *   Rating: 3
  */
 int isAsciiDigit(int x) {
-  return 2;
+  int t = x&0xf;
+  // printf("x = [%.8x]\n", x);
+  // printf("[%.8x]\n", !(t&0xa & t&0x6));
+  // printf("[%.8x]\n", !((x&~0xf)^0x30));
+  // printf("a = [%.8x]\n", ((t^0x3a)&&(t^0x3b)&&(t^0x3c)&&(t^0x3d)&&(t^0x3e)&&(t^0x3f)));
+  // printf("[%.8x]\n", !(x&~0x3f));
+  return (!(t&0x8) | !(t&0x6)) & !((x&~0xf)^0x30);
 }
 /* 
  * conditional - same as x ? y : z 
@@ -209,7 +216,8 @@ int isAsciiDigit(int x) {
  *   Rating: 3
  */
 int conditional(int x, int y, int z) {
-  return 2;
+  int t=!x+~0;
+  return (t&y)|(~t&z);
 }
 /* 
  * isLessOrEqual - if x <= y  then return 1, else return 0 
@@ -219,7 +227,19 @@ int conditional(int x, int y, int z) {
  *   Rating: 3
  */
 int isLessOrEqual(int x, int y) {
-  return 2;
+  int r31 = 0x7fffffff;
+  int l1 = 0x70000000;
+  int l2 = 0x40000000;
+  y = ~y;
+  int a = x&r31+y&r31;
+  int t = a&l1;
+  printf("a = [%.8x]\n", a);
+  printf("t = [%.8x]\n", t);
+  printf("xl1 = [%.8x]\n", ((x&~l1)>>31)&0x1);
+  printf("yl1 = [%.8x]\n", ((y&~l1)>>31)&0x1);
+  printf("al1 = [%.8x]\n", ((t&~l1)>>31)&0x1);
+  printf("return = [%.8x]\n", ((x&~l1)>>31)&0x1 + ((y&~l1)>>31)&0x1 + ((t&~l1)>>31)&0x1 + 1);
+  return ((x&~l1)>>31)&0x1 + ((y&~l1)>>31)&0x1 + ((t&~l1)>>31)&0x1;
 }
 //4
 /* 
