@@ -1,3 +1,12 @@
 {
-    "C_Cpp.errorSquiggles": "Enabled"
+    "files.associations": {
+        "*.cjson": "jsonc",
+        "*.wxss": "css",
+        "*.wxs": "javascript",
+        "*.js": "javascript",
+        "unordered_map": "cpp"
+    },
+    "cSpell.words": [
+        "pvec"
+    ]
 }
